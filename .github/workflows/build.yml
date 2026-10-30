@@ -1,0 +1,18 @@
+name: Build dylib
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile
+        run: |
+          clang++ -dynamiclib -arch arm64 \
+            -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
+            -miphoneos-version-min=14.0 \
+            -framework Foundation -fobjc-arc \
+            Tweak.mm -o OdysseyTweak.dylib
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OdysseyTweak
+          path: OdysseyTweak.dylib
