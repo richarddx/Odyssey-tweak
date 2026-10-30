@@ -126,4 +126,4 @@ static void WriteAll(uint32_t ref) {
 }
 
 @interface TwkUI : NSObject
-@property (strong) UIView *panel
+@property (strong) UIView *panel;
