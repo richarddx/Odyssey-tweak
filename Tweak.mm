@@ -43,16 +43,6 @@ static bool RD(uintptr_t a, void *o, size_t n) {
 static bool Match(uint32_t cur, uint32_t ref) {
     return gFloat ? fabsf(FloatOf(cur) - FloatOf(ref)) < 0.01f : cur == ref;
 }
-@interface TwkDrag : NSObject
-@end
-@implementation TwkDrag
-+ (void)pan:(UIPanGestureRecognizer *)g {
-    UIView *v = g.view;
-    CGPoint t = [g translationInView:v.superview];
-    v.center = CGPointMake(v.center.x + t.x, v.center.y + t.y);
-    [g setTranslation:CGPointZero inView:v.superview];
-}
-@end
 
 static void ScanRange(uintptr_t p, size_t n, uint32_t ref) {
     if (!RD(p, gBuf, n)) return;
@@ -188,10 +178,23 @@ static UIButton *MakeBtn(NSString *title, int tag, CGFloat x, CGFloat y) {
     return b;
 }
 
+@interface TwkDrag : NSObject
+@end
+@implementation TwkDrag
++ (void)pan:(UIPanGestureRecognizer *)g {
+    UIView *v = g.view;
+    CGPoint t = [g translationInView:v.superview];
+    v.center = CGPointMake(v.center.x + t.x, v.center.y + t.y);
+    [g setTranslation:CGPointZero inView:v.superview];
+}
+@end
+
 static void BuildUI(UIWindow *w) {
     gPanel = [[UIView alloc] initWithFrame:CGRectMake(8, 90, 324, 214)];
     gPanel.backgroundColor = [UIColor colorWithWhite:0 alpha:0.8];
     gPanel.layer.cornerRadius = 12;
+    [gPanel addGestureRecognizer:[[UIPanGestureRecognizer alloc]
+        initWithTarget:[TwkDrag class] action:@selector(pan:)]];
 
     gTf = [[UITextField alloc] initWithFrame:CGRectMake(8, 8, 130, 34)];
     gTf.borderStyle = UITextBorderStyleRoundedRect;
@@ -225,6 +228,8 @@ static void BuildUI(UIWindow *w) {
     [tog setTitle:@"=" forState:UIControlStateNormal];
     tog.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
     tog.layer.cornerRadius = 8;
+    [tog addGestureRecognizer:[[UIPanGestureRecognizer alloc]
+        initWithTarget:[TwkDrag class] action:@selector(pan:)]];
     UIAction *ta = [UIAction actionWithHandler:^(UIAction *a) { gPanel.hidden = !gPanel.hidden; }];
     [tog addAction:ta forControlEvents:UIControlEventTouchUpInside];
     [w addSubview:tog];
