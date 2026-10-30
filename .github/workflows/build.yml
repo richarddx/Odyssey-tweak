@@ -10,7 +10,7 @@ jobs:
           clang++ -dynamiclib -arch arm64 \
             -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
             -miphoneos-version-min=14.0 \
-            -framework Foundation -fobjc-arc \
+                -framework Foundation -framework UIKit -fobjc-arc \
             Tweak.mm -o OdysseyTweak.dylib
       - uses: actions/upload-artifact@v4
         with:
