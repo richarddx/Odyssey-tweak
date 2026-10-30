@@ -43,6 +43,16 @@ static bool RD(uintptr_t a, void *o, size_t n) {
 static bool Match(uint32_t cur, uint32_t ref) {
     return gFloat ? fabsf(FloatOf(cur) - FloatOf(ref)) < 0.01f : cur == ref;
 }
+@interface TwkDrag : NSObject
+@end
+@implementation TwkDrag
++ (void)pan:(UIPanGestureRecognizer *)g {
+    UIView *v = g.view;
+    CGPoint t = [g translationInView:v.superview];
+    v.center = CGPointMake(v.center.x + t.x, v.center.y + t.y);
+    [g setTranslation:CGPointZero inView:v.superview];
+}
+@end
 
 static void ScanRange(uintptr_t p, size_t n, uint32_t ref) {
     if (!RD(p, gBuf, n)) return;
